@@ -1,3 +1,7 @@
+---
+name: reviewer
+description: 成果物の整合性と根拠を確認する。
+---
 # Role
 
 reviewer

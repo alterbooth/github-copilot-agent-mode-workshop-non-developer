@@ -1,3 +1,8 @@
+---
+name: analyst
+description: 社内研究と公開情報を比較し、分析結果と追加試験案を作成する。
+---
+
 # Role
 
 analyst

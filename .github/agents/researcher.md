@@ -1,3 +1,7 @@
+---
+name: researcher
+description: 研究資料を理解し、必要な公開情報の調査を実施する。
+---
 # Role
 
 researcher
