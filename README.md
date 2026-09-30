@@ -2,7 +2,8 @@
 > このリポジトリはGitHub Copilotを活用したハンズオン教材です。  
 > 以下のハンズオンテキストに従って進めてください。
 > 
-> [ハンズオンテキスト](textbook.md)
+> - [ハンズオンテキスト (GitHub Copilot Chat)](textbook-copilot-chat.md)
+> - [ハンズオンテキスト (GitHub Copilot Agents)](textbook-copilot-agents.md)
 
 ---
 
