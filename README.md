@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> このリポジトリはGitHub Copilotを活用したハンズオン教材です。  
+> 以下のハンズオンテキストに従って進めてください。
+> 
+> [ハンズオンテキスト](textbook.md)
+
 # ABC-101 Anti-Inflammatory Research Project
 
 ## Overview
