@@ -95,8 +95,8 @@ research-project/
 1. Visual Studio Codeを起動します。
 2. **［ファイル］→［フォルダーを開く］** を選択します。
 3. 展開した `research-project` フォルダーを選択します。
-4. 制限モードが有効になっている場合は、フォルダーを信頼する設定を行う。
-    ![vscode-trust-directory](img/vscode-trust-directory.png)
+4. 制限モードが有効になっている場合は、フォルダーを信頼する設定を行う。  
+    ![vscode-trust-directory](img/chat/vscode-trust-directory.png)
 5. 左側のエクスプローラーに研究資料が表示されることを確認します。
 
 ### チェックポイント
@@ -119,8 +119,8 @@ Agent Modeは、質問に回答するだけでなく、リポジトリ内の複�
 ### 作業手順
 
 1. GitHub Copilot Chatを開きます。
-2. モード選択から**Agent**を選択します。
-    ![vscode-copilot-agent-mode](img/vscode-copilot-agent-mode.png)
+2. モード選択から**Agent**を選択します。  
+    ![vscode-copilot-agent-mode](img/chat/vscode-copilot-agent-mode.png)
 3. 次の指示を入力します。
     ```text
     このリポジトリを確認し、どのような研究が行われているか説明してください。

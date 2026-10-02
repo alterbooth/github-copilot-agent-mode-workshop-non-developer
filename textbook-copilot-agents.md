@@ -350,9 +350,10 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 ### 作業
 
 1. Copilot Chatを開き、Agent Modeにします。
-2. エージェント選択メニューを開き、`researcher`、`analyst`、`reporter`、`reviewer`が一覧にあるか確認します。
+2. エージェント選択メニューを開き、`researcher`、`analyst`、`reporter`、`reviewer`が一覧にあるか確認します。  
+    ![vscode-copilot-custom-agents](img/agents/vscode-copilot-custom-agents.png)
 3. 一覧に出ない場合は、ファイル名、配置場所、frontmatterの区切り（`---`）と`name`・`description`の記述を確認します。ファイルを保存しても反映されない場合は、VS Codeの表示を更新するか、ウィンドウを再読み込みして確認します。
-4. 一覧から`researcher`を選び、資料を確認するだけの短い依頼を実行します。
+4. `researcher`エージェントを選び、資料を確認するだけの短い依頼を実行します。
     ```text
     研究資料を確認し、研究目的と候補化合物を根拠ファイル名付きで簡潔にまとめてください。
     この確認ではファイルを変更しないでください。
@@ -372,7 +373,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 
 ### 作業
 
-1. エージェント選択メニューから`researcher`を選びます。
+1. `researcher`エージェントを選びます。
 2. 次の依頼を入力します。
     ```text
     ABC-101の研究資料を確認し、研究目的、実験条件、既存結果を根拠となるファイル名付きで整理してください。
@@ -399,7 +400,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 
 ### 作業
 
-1. エージェント選択メニューから`analyst`を選びます。
+1. `analyst`エージェントを選びます。
 2. 次の依頼を入力します。
     ```text
     references/research-summary.mdとresults/assay-results.csv、関連するprotocols/およびexperiments/を確認してください。
@@ -426,7 +427,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 
 ### 作業
 
-1. エージェント選択メニューから`reporter`を選びます。
+1. `reporter`エージェントを選びます。
 2. 次の依頼を入力します。
     ```text
     references/research-summary.mdとreports/assay-analysis.mdを基に、ABC-101の研究責任者向け報告書を作成してください。
@@ -459,7 +460,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
     git diff
     ```
     まだ変更をコミットしていない場合、`git diff`で追跡対象ファイルの変更を確認できます。新規ファイルは`git status`に表示されることを確認し、VS Codeで内容を開いてレビュー対象に含めます。
-2. エージェント選択メニューから`reviewer`を選びます。
+2. `reviewer`エージェントを選びます。
 3. 次の依頼を入力します。
     ```text
     README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdと現在の変更差分を照合してください。
