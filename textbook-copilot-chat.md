@@ -1,4 +1,4 @@
-# GitHub Copilot Agent Modeで実現する研究業務のAIエージェント活用ワークショップ
+# GitHub Copilot Agent Modeで実現する研究業務活用ワークショップ
 
 ## 1. ワークショップの概要
 
