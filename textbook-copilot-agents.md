@@ -1,8 +1,8 @@
-# GitHub Copilotのカスタム指示とカスタムエージェントを使った研究業務ハンズオン
+# GitHub Copilotのカスタム指示とカスタムエージェントを使った研究業務ワークショップ
 
-## 1. このハンズオンについて
+## 1. ワークショップの概要
 
-この教材は、[GitHub Copilot Agent Modeで実現する研究業務のAIエージェント活用体験](textbook-copilot-chat.md)で作成した研究プロジェクトを引き継ぐ続編です。リポジトリに共通指示と役割別のカスタムエージェントを追加し、成果物ファイルを介して調査・分析・報告・レビューを順に進めます。
+このワークショップは、 **[GitHub Copilot Agent Modeで実現する研究業務のAIエージェント活用ワークショップ](textbook-copilot-chat.md)** で作成した研究プロジェクトを引き継ぐ続編です。リポジトリに共通指示と役割別のカスタムエージェントを追加し、成果物ファイルを介して調査・分析・報告・レビューを順に進めます。
 
 ### 到達目標
 
@@ -125,12 +125,9 @@ CSV・調査結果 ──> analyst <────┘
 このワークショップでは架空データのみを扱う。実在する機密情報や未公開の研究データを使用しない。
 ```
 
-4. 保存後、ファイルがリポジトリ直下の`.github`フォルダー内にあることを確認します。
-
 ### 確認ポイント
 
-- [ ] ファイル名が`copilot-instructions.md`である
-- [ ] `.github`直下に配置されている
+- [ ] `.github`フォルダに`copilot-instructions.md`がある
 - [ ] 事実と解釈の区別、根拠の記録、架空データの使用が含まれている
 
 ## 5. Step 2：researcherエージェントを作成する
@@ -356,11 +353,10 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 2. エージェント選択メニューを開き、`researcher`、`analyst`、`reporter`、`reviewer`が一覧にあるか確認します。
 3. 一覧に出ない場合は、ファイル名、配置場所、frontmatterの区切り（`---`）と`name`・`description`の記述を確認します。ファイルを保存しても反映されない場合は、VS Codeの表示を更新するか、ウィンドウを再読み込みして確認します。
 4. 一覧から`researcher`を選び、資料を確認するだけの短い依頼を実行します。
-
-```text
-研究資料を確認し、研究目的と候補化合物を根拠ファイル名付きで簡潔にまとめてください。
-この確認ではファイルを変更しないでください。
-```
+    ```text
+    研究資料を確認し、研究目的と候補化合物を根拠ファイル名付きで簡潔にまとめてください。
+    この確認ではファイルを変更しないでください。
+    ```
 
 ### 確認ポイント
 
@@ -378,14 +374,12 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 
 1. エージェント選択メニューから`researcher`を選びます。
 2. 次の依頼を入力します。
-
-```text
-ABC-101の研究資料を確認し、研究目的、実験条件、既存結果を根拠となるファイル名付きで整理してください。
-必要に応じて関連する公開情報も調査してください。ABC-101は架空の化合物として扱い、実在する化合物の情報と混同しないでください。
-公開情報は出典、公開日、対象、研究条件を記録してください。確認できない事項は推測で補わず、未確認と明記してください。
-references/research-summary.mdに保存してください。
-```
-
+    ```text
+    ABC-101の研究資料を確認し、研究目的、実験条件、既存結果を根拠となるファイル名付きで整理してください。
+    必要に応じて関連する公開情報も調査してください。ABC-101は架空の化合物として扱い、実在する化合物の情報と混同しないでください。
+    公開情報は出典、公開日、対象、研究条件を記録してください。確認できない事項は推測で補わず、未確認と明記してください。
+    references/research-summary.mdに保存してください。
+    ```
 3. Copilotが提示するファイル変更を確認してから適用します。
 4. `references/research-summary.md`を開き、元資料と公開情報の出典を照合します。
 
@@ -407,21 +401,18 @@ references/research-summary.mdに保存してください。
 
 1. エージェント選択メニューから`analyst`を選びます。
 2. 次の依頼を入力します。
-
-```text
-references/research-summary.mdとresults/assay-results.csv、関連するprotocols/およびexperiments/を確認してください。
-CSVの数値・単位・実験条件を元ファイルと照合し、確認済みの事実と数値からの解釈を分けてください。
-内部研究と公開情報を比較するときは、比較軸と条件を明記し、条件が異なる場合は直接比較できないことを示してください。
-不足する評価項目と追加試験案には、それぞれ根拠と想定リスクを記載してください。
-研究上の結論は断定せず、reports/assay-analysis.mdに保存してください。
-```
-
+    ```text
+    references/research-summary.mdとresults/assay-results.csv、関連するprotocols/およびexperiments/を確認してください。
+    CSVの数値・単位・実験条件を元ファイルと照合し、確認済みの事実と数値からの解釈を分けてください。
+    内部研究と公開情報を比較するときは、比較軸と条件を明記し、条件が異なる場合は直接比較できないことを示してください。
+    不足する評価項目と追加試験案には、それぞれ根拠と想定リスクを記載してください。
+    研究上の結論は断定せず、reports/assay-analysis.mdに保存してください。
+    ```
 3. 提案された変更を確認して適用します。
 4. 分析ファイルに記載された数値を`results/assay-results.csv`と照合します。
 
 ### 確認ポイント
 
-- [ ] CSVの数値、単位、条件が元データと一致している
 - [ ] 事実、解釈、追加試験案が区別されている
 - [ ] 比較できない条件差が明示されている
 - [ ] 不足項目と試験案に根拠とリスクがある
@@ -437,14 +428,12 @@ CSVの数値・単位・実験条件を元ファイルと照合し、確認済�
 
 1. エージェント選択メニューから`reporter`を選びます。
 2. 次の依頼を入力します。
-
-```text
-references/research-summary.mdとreports/assay-analysis.mdを基に、ABC-101の研究責任者向け報告書を作成してください。
-現時点で言える範囲の要約を最初に置き、確認済みの事実、解釈、提案、リスク、未確認事項を区別してください。
-重要な主張には根拠となるファイル名または公開情報の出典を示してください。入力にない情報は追加せず、研究継続可否などを断定しないでください。
-reports/executive-summary.mdに保存してください。
-```
-
+    ```text
+    references/research-summary.mdとreports/assay-analysis.mdを基に、ABC-101の研究責任者向け報告書を作成してください。
+    現時点で言える範囲の要約を最初に置き、確認済みの事実、解釈、提案、リスク、未確認事項を区別してください。
+    重要な主張には根拠となるファイル名または公開情報の出典を示してください。入力にない情報は追加せず、研究継続可否などを断定しないでください。
+    reports/executive-summary.mdに保存してください。
+    ```
 3. 提示された変更を確認して適用します。
 4. 報告書の記述を調査・分析ファイルまでさかのぼり、根拠を確認します。
 
@@ -465,24 +454,19 @@ reports/executive-summary.mdに保存してください。
 ### 作業
 
 1. ターミナルで差分を確認します。
-
-```bash
-git status --short
-git diff
-```
-
-まだ変更をコミットしていない場合、`git diff`で追跡対象ファイルの変更を確認できます。新規ファイルは`git status`に表示されることを確認し、VS Codeで内容を開いてレビュー対象に含めます。
-
+    ```bash
+    git status --short
+    git diff
+    ```
+    まだ変更をコミットしていない場合、`git diff`で追跡対象ファイルの変更を確認できます。新規ファイルは`git status`に表示されることを確認し、VS Codeで内容を開いてレビュー対象に含めます。
 2. エージェント選択メニューから`reviewer`を選びます。
 3. 次の依頼を入力します。
-
-```text
-README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdと現在の変更差分を照合してください。
-数値の誤り、出典漏れ、元資料との不整合、過度な推測、事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認してください。
-問題が確認できた箇所のみ、対象ファイル、問題、理由、必要に応じた修正案を記載してください。研究上の判断や結論は追加しないでください。
-reports/review-comments.mdに保存してください。
-```
-
+    ```text
+    README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdと現在の変更差分を照合してください。
+    数値の誤り、出典漏れ、元資料との不整合、過度な推測、事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認してください。
+    問題が確認できた箇所のみ、対象ファイル、問題、理由、必要に応じた修正案を記載してください。研究上の判断や結論は追加しないでください。
+    reports/review-comments.mdに保存してください。
+    ```
 4. `reports/review-comments.md`を読み、各指摘を元資料で検証します。
 5. 指摘を自動的にすべて採用せず、修正するかどうかを受講者が判断します。必要な場合は該当ファイルを修正し、再度差分を確認します。
 
@@ -503,29 +487,24 @@ reports/review-comments.mdに保存してください。
 ### 作業
 
 1. 変更ファイルを確認します。
-
-```bash
-git status
-git diff
-```
-
+    ```bash
+    git status
+    git diff
+    ```
 2. VS Codeで新規ファイルを含む変更内容を確認します。研究判断の断定、出典の欠落、誤った数値がないことを確かめます。
 3. 確認したファイルだけをステージし、コミットします。以下は例です。実際に追加・変更したファイルに合わせて指定してください。
-
-```bash
-git add .github/copilot-instructions.md .github/agents/researcher.agent.md .github/agents/analyst.agent.md .github/agents/reporter.agent.md .github/agents/reviewer.agent.md references/research-summary.md reports/assay-analysis.md reports/executive-summary.md reports/review-comments.md
-git diff --cached
-git commit -m "研究支援用Copilotエージェントを追加"
-```
-
+    ```bash
+    git add .github/copilot-instructions.md .github/agents/researcher.agent.md .github/agents/analyst.agent.md .github/agents/reporter.agent.md .github/agents/reviewer.agent.md references/research-summary.md reports/assay-analysis.md reports/executive-summary.md reports/review-comments.md
+    git diff --cached
+    git commit -m "研究支援用Copilotエージェントを追加"
+    ```
 4. コミット後の状態を確認します。
+    ```bash
+    git status --short --branch
+    git show --stat --oneline HEAD
+    ```
 
-```bash
-git status --short --branch
-git show --stat --oneline HEAD
-```
-
-このハンズオンでは、コミットと差分の確認までを行います。リモートへのpushやPull Request作成は行いません。
+このワークショップでは、コミットと差分の確認までを行います。リモートへのpushやPull Request作成は行いません。
 
 ### 確認ポイント
 
