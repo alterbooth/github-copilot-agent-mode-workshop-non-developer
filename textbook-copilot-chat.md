@@ -108,7 +108,7 @@ research-project/
 
 ---
 
-## Step 0：GitHub Copilot Agent Modeを理解する
+## GitHub Copilot Agent Modeを理解する
 
 ### 目的
 
