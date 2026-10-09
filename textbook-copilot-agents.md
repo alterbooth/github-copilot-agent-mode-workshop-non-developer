@@ -4,33 +4,11 @@
 
 このワークショップは、[**GitHub Copilot Agent Modeで実現する研究業務活用ワークショップ**](textbook-copilot-chat.md)で作成した研究プロジェクトを引き継ぐ続編です。リポジトリに共通指示と役割別のカスタムエージェントを追加します。成果物ファイルを使って、調査、分析、報告、レビューを順に進めます。
 
-### 到達目標
+### このワークショップで体験すること
 
-- リポジトリ共通のカスタム指示を定義できる
-- VS Codeで認識されるカスタムエージェントを作成できる
-- エージェントごとの役割と入出力を分け、成果物ファイルを介して連携できる
-- 生成内容を元資料で確認し、人が修正要否を判断できる
-
-### この演習で作成するもの
-
-```text
-research-project/
-├── .github/
-│   ├── copilot-instructions.md
-│   └── agents/
-│       ├── researcher.agent.md
-│       ├── analyst.agent.md
-│       ├── reporter.agent.md
-│       └── reviewer.agent.md
-├── references/
-│   └── research-summary.md
-└── reports/
-    ├── assay-analysis.md
-    ├── executive-summary.md
-    └── review-comments.md
-```
-
-`.github/copilot-instructions.md`はリポジトリで作業するCopilotへの共通方針です。`.github/agents/`内の`.agent.md`ファイルは、それぞれの役割に特化したカスタムエージェントを定義します。
+1. リポジトリ共通のカスタム指示を定義する
+2. VS Codeで認識されるカスタムエージェントを作成する
+3. エージェントごとの役割と入出力を分け、成果物ファイルを介して連携する
 
 **注意**  
 演習では架空の化合物ABC-101と配布済みの架空データのみを扱います。Copilotが作成した調査・分析・提案は研究判断ではありません。内容の確認と判断は受講者が行います。
@@ -80,7 +58,7 @@ macOS/Linux:
 | エージェント | 主な作業 | 出力 |
 | --- | --- | --- |
 | `researcher` | 研究資料の理解、必要に応じた公開情報調査 | `references/research-summary.md` |
-| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md`（Python演習時はスクリプトと集計結果も作成） |
+| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md` |
 | `reporter` | 調査・分析結果を統合した報告書の作成 | `reports/executive-summary.md` |
 | `reviewer` | 元資料と作成済み成果物の照合 | `reports/review-comments.md` |
 
