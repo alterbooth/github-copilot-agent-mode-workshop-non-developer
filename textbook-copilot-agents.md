@@ -58,7 +58,7 @@ macOS/Linux:
 | エージェント | 主な作業 | 出力 |
 | --- | --- | --- |
 | `researcher` | 研究資料の理解、必要に応じた公開情報調査 | `references/research-summary.md` |
-| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md` |
+| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md`, `scripts/analyze_assay_variability.py`, `reports/assay-variability.md` |
 | `reporter` | 調査・分析結果を統合した報告書の作成 | `reports/executive-summary.md` |
 | `reviewer` | 元資料と作成済み成果物の照合 | `reports/review-comments.md` |
 
@@ -79,6 +79,8 @@ CSV・調査結果 ──> analyst <────┘
                        │
                        └──> review-comments.md
 ```
+
+Pythonの演習では、analystが元CSVから反復測定のばらつきを集計し、`scripts/analyze_assay_variability.py`と`reports/assay-variability.md`を作成します。
 
 会話の履歴だけに頼らず、各エージェントの作業結果を成果物ファイルに保存し、次のエージェントが入力として使えるようにします。
 
@@ -222,8 +224,8 @@ description: CSVの数値を整理し、調査結果との比較と根拠付き�
 # Output
 
 - reports/assay-analysis.md
-- scripts/summarize_assay.py
-- reports/assay-statistics.md
+- scripts/analyze_assay_variability.py
+- reports/assay-variability.md
 
 # Instructions
 
@@ -233,7 +235,7 @@ description: CSVの数値を整理し、調査結果との比較と根拠付き�
 4. 内部研究と公開研究は、比較可能な評価軸と条件を明示して比較する。条件が異なる場合は直接比較できないことを記載する。
 5. 不足する評価項目と追加試験案には、それぞれ根拠と想定リスクを示す。研究上の結論は断定しない。
 6. 結果を指定された出力ファイルに保存する。
-7. Pythonによる数値検証を依頼された場合は、pandasとPython標準ライブラリのpathlibを使い、入力CSVを変更しない補助スクリプトと集計結果を指定先に保存する。数値の事実と解釈を区別し、スクリプトを利用者の確認前に実行しない。
+7. Pythonによる反復測定のばらつき分析を依頼された場合は、pandasとPython標準ライブラリのpathlibを使い、`qc_flag`が`PASS`の行だけを対象に、化合物・濃度ごとの有効件数、標本標準偏差、最小値、最大値、範囲を集計する。欠損値は測定項目ごとに除外し、有効件数を示す。入力CSVを変更せず、専用スクリプトとレポートを指定先に保存する。数値の事実と解釈を区別し、スクリプトを利用者の確認前に実行しない。
 
 # Output Structure
 
@@ -265,6 +267,7 @@ description: 調査・分析の成果物を統合し、研究責任者向け報�
 
 - references/research-summary.md
 - reports/assay-analysis.md
+- reports/assay-variability.md（存在する場合。元CSVから作成した派生資料として扱う）
 
 # Output
 
@@ -276,7 +279,8 @@ description: 調査・分析の成果物を統合し、研究責任者向け報�
 2. 確認済みの事実、解釈、提案、未確認事項を明確に区別する。
 3. 重要な主張ごとに根拠となるファイル名または公開情報の出典を示す。
 4. 現時点の要約を冒頭に置く。研究継続可否などの研究判断を断定しない。
-5. 結果を指定された出力ファイルに保存する。
+5. `reports/assay-variability.md`がある場合は、反復測定のばらつきを記述的な事実として扱い、研究上の結論に結び付けない。元CSVと照合し、根拠として示す。
+6. 結果を指定された出力ファイルに保存する。
 
 # Output Structure
 
@@ -313,6 +317,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - references/research-summary.md
 - reports/assay-analysis.md
 - reports/assay-statistics.md（存在する場合）
+- reports/assay-variability.md（存在する場合）
 - reports/executive-summary.md
 - 作成済みの成果物ファイル
 
@@ -324,11 +329,12 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 
 1. 元資料との不整合、数値の誤り、出典漏れ、過度な推測を確認する。
 2. 事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認する。
-3. 問題が確認できた箇所のみを指摘し、対象ファイルと理由を示す。
-4. 修正案を示す場合は、元資料または指示に基づく理由を添える。
-5. 問題が見つからない項目を、問題があるかのように記載しない。
-6. 自身で研究上の判断や結論を追加しない。
-7. 結果を指定された出力ファイルに保存する。
+3. `reports/assay-variability.md`がある場合は、元CSVの`PASS`行を使って集計値を照合し、統計量と有効件数を確認する。
+4. 問題が確認できた箇所のみを指摘し、対象ファイルと理由を示す。
+5. 修正案を示す場合は、元資料または指示に基づく理由を添える。
+6. 問題が見つからない項目を、問題があるかのように記載しない。
+7. 自身で研究上の判断や結論を追加しない。
+8. 結果を指定された出力ファイルに保存する。
 
 # Output Structure
 
@@ -428,45 +434,53 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 3. 提案された変更を確認して適用します。
 4. 分析ファイルに記載された数値を`results/assay-results.csv`と照合します。
 
-#### pandasで数値集計を照合する
+#### pandasで反復測定のばらつきを集計する
 
-前編のPython追加演習で `scripts/summarize_assay.py` が作成済みの場合は、コードを確認してから再利用します。ない場合は、`analyst`エージェントに次の指示を入力して作成します。実行時は設定済みの `.venv` を使います。
+反復測定のばらつきを集計する専用スクリプト `scripts/analyze_assay_variability.py` とレポート `reports/assay-variability.md` を作成します。  
+実行環境には設定済みの `.venv` を指定してください。
+
+`analyst`エージェントに次の指示を入力します。
 
 ```text
-results/assay-results.csvの数値を検証・集計するPythonスクリプトを作成してください。
+results/assay-results.csvを読み取り、化合物・濃度ごとに反復測定のばらつきを集計するPythonスクリプトを作成してください。
 
-保存先:
-scripts/summarize_assay.py
+スクリプトの保存先:
+scripts/analyze_assay_variability.py
+
+レポートの保存先:
+reports/assay-variability.md
 
 条件:
 - pandasとPython標準ライブラリのpathlibを使う。pandas以外の追加パッケージやWebアクセスは使わない
 - 入力CSVは読み取り専用とし、リポジトリのルートから実行できるようにする
-- experiment_id、compound_id、concentration_uM、replicate、qc_flag、および下記の測定列を必須列として確認する
-- concentration_uMと下記の測定列は数値として扱う。空欄を除き、数値に変換できない値がある場合は、問題の列やCSV上の行番号が分かるエラーを表示して処理を失敗させる
-- compound_idとconcentration_uMごとに、cell_viability_pct、il6_inhibition_pct、tnf_alpha_inhibition_pct、cytotoxicity_pctの平均値と有効値の件数を集計する
-- 空欄の件数を項目ごとに報告し、平均値の計算からは除外する
-- CSVの総データ行数と、qc_flagがPASS以外の行およびexperiment_id、compound_id、concentration_uM、replicate、qc_flagを報告する
-- 集計結果、対象ファイル、集計方法をreports/assay-statistics.mdに保存する。reportsフォルダーがない場合は作成する
-- 出力は数値の集計事実に限り、有望性や研究上の結論を判定しない
-- 既存のCSVや指定出力先以外のファイルを変更しない
+- experiment_id、compound_id、concentration_uM、replicate、qc_flag、およびcell_viability_pct、il6_inhibition_pct、tnf_alpha_inhibition_pct、cytotoxicity_pctを必要列として確認する
+- concentration_uMと測定値の列は数値として扱う。空欄以外で数値に変換できない値があれば、列名とCSV上の行番号が分かるエラーを表示して失敗させる
+- qc_flagがPASS以外の行は統計量の計算から除外し、除外件数とexperiment_id、compound_id、concentration_uM、replicate、qc_flagをレポートする
+- PASSの行について、compound_idとconcentration_uMごとに測定項目別の有効件数、標本標準偏差（ddof=1）、最小値、最大値、範囲（最大値と最小値の差）を計算する
+- 欠損測定値は項目ごとに計算から除外し、有効件数に反映する
+- 測定値が2件未満の項目は標本標準偏差と範囲を「算出不可」とし、1件だけの値をばらつきがないと解釈しない
+- 集計結果、対象ファイル、QC行の扱い、集計方法をreports/assay-variability.mdに保存する。reportsフォルダーがない場合は作成する
+- Markdown表はPython標準ライブラリで生成し、追加パッケージに依存しない
+- 出力は数値の集計事実に限り、有効性、安全性、研究上の結論を判定しない
+- 既存のCSV、前編のスクリプトやレポート、指定出力先以外のファイルを変更しない
 ```
 
-スクリプトを実行する前に、入力がCSV、出力先が `reports/assay-statistics.md` に限定されていることを確認します。外部通信やpandas以外の追加パッケージを使っていないことも確認します。リポジトリのルートから、設定済みの `.venv` のPythonで実行します。
+スクリプトを実行する前に、入力がCSV、出力先が `reports/assay-variability.md` に限定されていることを確認します。リポジトリのルートから、設定済みの `.venv` のPythonで実行します。
 
 ```text
-Windows PowerShell: .\.venv\Scripts\python.exe scripts/summarize_assay.py
-macOS/Linux:        .venv/bin/python scripts/summarize_assay.py
+Windows PowerShell: .\.venv\Scripts\python.exe scripts/analyze_assay_variability.py
+macOS/Linux:        .venv/bin/python scripts/analyze_assay_variability.py
 ```
 
-`reports/assay-statistics.md`の行数、欠損件数、QCフラグ、平均値を元CSVと照合します。数値の差があれば解釈で埋めず、原因を確認します。平均値だけで有効性や安全性を判断しないでください。
+`reports/assay-variability.md`の値を元CSVのうち`qc_flag`が`PASS`の行と照合します。測定項目ごとの有効件数、標本標準偏差、最小値、最大値、範囲を確認し、QC除外行が統計量に含まれていないことを確かめます。数値の違いは解釈で埋めず、原因を確認してください。
 
 ```text
-reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合してください。
-不一致があれば、該当する化合物・濃度・測定項目と根拠を示してください。
-元CSVを基準に確認し、ファイルを変更せず、数値の事実と解釈・提案を区別して報告してください。
+reports/assay-variability.mdの各集計値をresults/assay-results.csvと照合してください。
+qc_flagがPASSの行だけを使い、化合物・濃度・測定項目ごとの有効件数、標本標準偏差、最小値、最大値、範囲を確認してください。
+不一致があれば、該当する行と列を示してください。元CSVを変更せず、数値の事実と解釈・提案を区別してください。
 ```
 
-ここまでの変更をコミットします。コミットメッセージは `実験結果の分析を保存` とします。
+ここまでの変更をコミットします。コミットメッセージは `実験結果の分析を保存` とします。  
 なお、Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。  
 本演習には不要なフォルダであるため、コミットせず削除して構いません。
 
@@ -476,7 +490,7 @@ reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合して�
 - [ ] 比較できない条件差が明示されている
 - [ ] 不足項目と試験案に根拠とリスクがある
 - [ ] `reports/assay-analysis.md`が保存されている
-- [ ] スクリプトと集計結果を元CSVと照合した
+- [ ] 専用スクリプトとばらつきレポートが保存され、PASSの測定値と照合できている
 
 ---
 
@@ -492,6 +506,7 @@ reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合して�
 2. 次の依頼を入力します。
     ```text
     references/research-summary.mdとreports/assay-analysis.mdを基に、ABC-101の研究責任者向け報告書を作成してください。
+    reports/assay-variability.mdがある場合は補助資料として参照し、元CSVのPASS行と照合してください。ばらつきの記述は数値の事実にとどめ、研究上の結論を推測しないでください。
     現時点で言える範囲の要約を最初に置き、確認済みの事実、解釈、提案、リスク、未確認事項を区別してください。
     重要な主張には根拠となるファイル名または公開情報の出典を示してください。入力にない情報は追加せず、研究継続可否などを断定しないでください。
     reports/executive-summary.mdに保存してください。
@@ -523,6 +538,7 @@ reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合して�
     ```text
     README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdを照合してください。
     reports/assay-statistics.mdがある場合は、元CSVおよびreports/assay-analysis.mdの数値と照合してください。統計レポートは派生資料として扱い、元CSVを基準にしてください。
+    reports/assay-variability.mdがある場合は、元CSVのqc_flagがPASSの行だけを使って有効件数、標本標準偏差、最小値、最大値、範囲を照合してください。
     数値の誤り、出典漏れ、元資料との不整合、過度な推測、事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認してください。
     問題が確認できた箇所のみ、対象ファイル、問題、理由、必要に応じた修正案を記載してください。研究上の判断や結論は追加しないでください。
     reports/review-comments.mdに保存してください。
@@ -557,7 +573,8 @@ git status --short --branch
 git log --oneline
 ```
 
-各Stepのコミットメッセージが履歴に表示され、未コミットの変更が残っていないことを確認します。
+各Stepのコミットメッセージが履歴に表示され、未コミットの変更が残っていないことを確認します。  
+`git log` コマンドは `q` キーで終了します。
 
 ### チェックポイント
 
@@ -584,9 +601,11 @@ research-project/
 ├── reports/
 │   ├── assay-analysis.md
 │   ├── assay-statistics.md
+│   ├── assay-variability.md
 │   ├── executive-summary.md
 │   └── review-comments.md
 └── scripts/
+    ├── analyze_assay_variability.py
     └── summarize_assay.py
 ```
 
@@ -596,7 +615,8 @@ research-project/
 - [ ] 4つのカスタムエージェントがVS Codeで選択できる
 - [ ] `references/research-summary.md`に調査結果と参照元が記録されている
 - [ ] `reports/assay-analysis.md`に実験結果の分析が記録されている
-- [ ] `scripts/summarize_assay.py`と`reports/assay-statistics.md`が作成され、集計内容を確認した
+- [ ] `scripts/summarize_assay.py`と`reports/assay-statistics.md`の集計内容を確認した
+- [ ] `scripts/analyze_assay_variability.py`と`reports/assay-variability.md`を作成し、PASS行の集計内容を確認した
 - [ ] `reports/executive-summary.md`に研究責任者向けの報告が記録されている
 - [ ] `reports/review-comments.md`にレビュー結果が記録されている
 
