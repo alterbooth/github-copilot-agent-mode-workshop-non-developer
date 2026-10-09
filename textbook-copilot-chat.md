@@ -15,18 +15,6 @@
 5. CSV形式の実験結果を分析する
 6. 研究責任者向け報告書を作成する
 7. ローカルGitで変更履歴を記録する
-8. コミットの差分を確認し、変更内容をレビューする
-
-### 到達目標
-
-ワークショップ終了後、次の状態になることを目指します。
-
-- GitHub Copilot Agent Modeの特徴を説明できる
-- ローカルGitを研究資料や成果物の変更履歴管理に利用できる
-- 複数ファイルを対象とした調査や整理をCopilotへ依頼できる
-- リポジトリ内の情報とWeb上の公開情報を組み合わせて比較できる
-- AIが生成した事実、解釈、提案を区別して確認できる
-- Gitの基本操作を使って変更履歴を記録できる
 
 ---
 
@@ -68,45 +56,26 @@
 
 ## 演習用ファイルの準備
 
-### ZIPファイルを展開する
-
 1. 講師から配布されたZIPファイルをPCへ保存します。
 2. ZIPファイルを `research-project` フォルダーとして展開します。
+3. 展開したフォルダーをVisual Studio Codeで開きます。
+    1. **［ファイル］→［フォルダーを開く］** を選択します。
+    2. 展開した `research-project` フォルダーを選択します。
+    3. 制限モードが有効になっている場合は、フォルダーを信頼する設定を行います。  
+        ![vscode-trust-directory](img/chat/vscode-trust-directory.png)
+    4. 左側のエクスプローラーに研究資料が表示されることを確認します。
 
-フォルダー構成は次のとおりです。
+## Visual Studio Codeでコミットする
 
-```text
-research-project/
-├── README.md
-├── protocols/
-│   ├── protocol-a.md
-│   └── protocol-b.md
-├── experiments/
-│   ├── experiment-001.md
-│   ├── experiment-002.md
-│   └── experiment-003.md
-├── results/
-│   └── assay-results.csv
-├── references/
-│   └── internal-reference.md
-└── reports/
-```
+コミット操作は、ターミナルではなくVisual Studio Codeのソース管理ビューで行います。
 
-### Visual Studio Codeで開く
-
-1. Visual Studio Codeを起動します。
-2. **［ファイル］→［フォルダーを開く］** を選択します。
-3. 展開した `research-project` フォルダーを選択します。
-4. 制限モードが有効になっている場合は、フォルダーを信頼する設定を行います。
-    ![vscode-trust-directory](img/chat/vscode-trust-directory.png)
-5. 左側のエクスプローラーに研究資料が表示されることを確認します。
-
-### チェックポイント
-
-- [ ] `research-project` フォルダーを開いている
-- [ ] `README.md`、`protocols`、`experiments`、`results`、`references`、`reports` が表示される
-- [ ] GitHub Copilot Chatを開ける
-- [ ] Agent Modeを選択できる
+1. アクティビティバーの［ソース管理］アイコンを選びます。
+2. ［変更］に表示されたファイルを確認し、コミット対象ファイルの「＋」を選んでステージします。Step1の初回コミットでは、配布された演習ファイルを確認してから［すべての変更をステージ］を選びます。  
+    ![vscode-git-stage](img/chat/vscode-git-stage.png)
+3. ［ステージされた変更］にコミット対象だけが表示されていることを確認します。
+4. 各Stepで指定されるコミットメッセージを入力し、［コミット］を選びます。  
+    ![vscode-git-commit](img/chat/vscode-git-commit.png)
+5. コミット後、［変更］に意図しないファイルが残っていないことを確認します。未コミットの変更が残っている場合は内容を確認してください。
 
 ---
 
@@ -134,13 +103,6 @@ Agent Modeは通常のチャットと異なり、質問に回答するだけで�
 4. Copilotが参照したファイルを確認します。
 5. 回答に、配布資料に書かれていない内容が追加されていないか確認します。
 
-### チェックポイント
-
-- [ ] Copilotが複数のファイルを確認した
-- [ ] 研究目的、研究対象、実験方法、結果が整理された
-- [ ] 不足情報が「不明」または「未確認」として扱われている
-- [ ] 回答の根拠を元ファイルで確認した
-
 ---
 
 ## Step 1：ローカルGitの基本を確認する
@@ -157,26 +119,20 @@ Agent Modeは通常のチャットと異なり、質問に回答するだけで�
 Visual Studio Codeでターミナルを開き、次を実行します。
 
 ```bash
-git init
+git init -b main
 git status
 git remote -v
 ```
 
-`git remote -v` に何も表示されないことを確認します。この演習ではローカルリポジトリだけを使用し、リモートの追加やプッシュは行いません。
-
-### 変更を記録する
-
-```bash
-git add .
-git commit -m "演習資料を登録"
-```
+`git remote -v` に何も表示されないことを確認します。この演習ではローカルリポジトリだけを使用し、リモートの追加やプッシュは行いません。  
+また、ここまでの変更をコミットします。コミットメッセージは `演習資料を登録` とします。
 
 ### チェックポイント
 
 - [ ] `git init` でリポジトリが初期化された
+- [ ] 初期ブランチが `main` になっている
 - [ ] `git status` で変更ファイルを確認できた
-- [ ] `git add .` を実行した
-- [ ] `git commit` が完了した
+- [ ] ソース管理ビューで初期ファイルをステージしてコミットした
 - [ ] コミットメッセージから変更内容を理解できる
 
 ---
@@ -293,7 +249,8 @@ references/research-summary.md
 - 参照元一覧
 ```
 
-Copilotからファイル変更の確認を求められた場合は、変更内容を確認してから承認します。
+Copilotからファイル変更の確認を求められた場合は、変更内容を確認してから承認します。  
+また、ここまでの変更をコミットします。コミットメッセージは `公開情報の調査結果を保存` とします。
 
 ### チェックポイント
 
@@ -424,7 +381,7 @@ Pythonのpandasを使い、CSVの基本確認と記述統計を再現します�
     - 数値の集計事実だけを出力し、有望性、異常値、研究上の結論を判定・推測しない
     - 既存のCSVや他のファイルを変更しない
     ```
-5. 生成された `scripts/summarize_assay.py` を開き、入力がCSVファイルに限られ、出力も `reports/assay-statistics.md` に限定されていることを確認します。外部通信やpandas以外の追加パッケージを使っていないことも確認します。
+5. 生成された `scripts/summarize_assay.py` を開き、入力がCSVファイルに限られ、出力も `reports/assay-statistics.md` に限定されていることを確認します。
 6. リポジトリのルートで実行します。
     ```text
     python scripts/summarize_assay.py
@@ -438,8 +395,9 @@ Pythonのpandasを使い、CSVの基本確認と記述統計を再現します�
     ファイルは変更せず、数値の事実と解釈・提案を区別して報告してください。
     ```
 
-**注意**  
-Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。本演習には不要なフォルダであるため、コミットせず削除して構いません。
+ここまでの変更をコミットします。コミットメッセージは `実験結果の分析を保存` とします。  
+なお、Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。  
+本演習には不要なフォルダであるため、コミットせず削除して構いません。
 
 ### チェックポイント
 
@@ -504,6 +462,8 @@ reports/executive-summary.md
 5. リスクと未確認事項が省略されていないか
 6. 提案が確認済みの事実として書かれていないか
 
+ここまでの変更をコミットします。コミットメッセージは `研究責任者向け報告書を作成` とします。
+
 ### チェックポイント
 
 - [ ] `reports/executive-summary.md` が作成された
@@ -515,19 +475,11 @@ reports/executive-summary.md
 
 ---
 
-## Step 7：変更を記録し、ローカルでレビューする
+## Step 7：報告書に追加試験計画を追記する
 
 ### 目的
 
-Copilotが作成した成果物をローカルGitに記録し、コミットの差分を確認してレビューします。
-
-### 作業用ブランチを作成する
-
-ターミナルで次を実行します。
-
-```bash
-git switch -c feature/additional-study
-```
+報告書に追加試験計画を追記します。
 
 ### 報告書へ追加試験計画を追記する
 
@@ -545,55 +497,11 @@ reports/executive-summary.mdに追加試験計画の章を追記してくださ�
 既存の報告書と表現を統一してください。
 ```
 
-変更内容を確認し、問題がなければ保存します。
-
-### 変更をコミットする
-
-```bash
-git status
-git add reports/executive-summary.md
-git commit -m "追加試験計画を報告書へ追記"
-```
-
-### ローカルで差分を確認する
-
-次のコマンドで、作成したコミットの概要と報告書の差分を確認します。
-
-```bash
-git status --short --branch
-git show --stat --oneline HEAD
-git show --format= HEAD -- reports/executive-summary.md
-```
-
-変更されたファイル、追加・削除された内容、変更理由が意図どおりか確認します。
-
-### Copilotにローカルの変更をレビューさせる
-
-次の指示を入力します。
-
-```text
-`git diff HEAD^ HEAD -- reports/executive-summary.md`で確認できる今回の変更内容をレビューしてください。
-次の観点で問題を確認してください。
-- 実験結果との矛盾
-- 調査結果との矛盾
-- 根拠が不足している主張
-- 事実と提案の混在
-- 研究責任者に伝わりにくい表現
-
-問題がある場合は、該当箇所と修正案を示してください。
-```
-
-指摘内容を元ファイルと照合し、必要な修正だけを反映します。
+ここまでの変更をコミットします。コミットメッセージは `追加試験計画を報告書へ追記` とします。
 
 ### チェックポイント
 
-- [ ] `feature/additional-study` ブランチを作成した
 - [ ] 追加試験計画を追記した
-- [ ] `git status` で変更内容を確認した
-- [ ] 変更をコミットした
-- [ ] `git remote -v` に何も表示されないことを確認した
-- [ ] `git show` でローカルコミットの差分を確認した
-- [ ] レビュー結果を鵜呑みにせず、元資料と照合した
 
 ---
 
@@ -612,13 +520,6 @@ research-project/
 └── scripts/
     └── summarize_assay.py
 ```
-
-### 成果物チェック
-
-- [ ] `references/research-summary.md` に調査結果と参照元が記録されている
-- [ ] `reports/assay-analysis.md` に実験結果の分析が記録されている
-- [ ] `reports/executive-summary.md` に研究責任者向けの報告が記録されている
-- [ ] `scripts/summarize_assay.py` と `reports/assay-statistics.md` が作成され、集計内容を確認した
 
 ---
 
