@@ -82,7 +82,7 @@ macOS/Linux:
 | `researcher` | 研究資料の理解、必要に応じた公開情報調査 | `references/research-summary.md` |
 | `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md`（Python演習時はスクリプトと集計結果も作成） |
 | `reporter` | 調査・分析結果を統合した報告書の作成 | `reports/executive-summary.md` |
-| `reviewer` | 元資料・成果物・変更差分との照合 | `reports/review-comments.md` |
+| `reviewer` | 元資料と作成済み成果物の照合 | `reports/review-comments.md` |
 
 作業の流れは次のとおりです。
 
@@ -97,7 +97,7 @@ CSV・調査結果 ──> analyst <────┘
                        │
                        └──> executive-summary.md
                                   │
-                   reviewer <────┘ + 元資料 + 変更差分
+                   reviewer <────┘ + 元資料 + 作成済み成果物
                        │
                        └──> review-comments.md
 ```
@@ -144,7 +144,9 @@ CSV・調査結果 ──> analyst <────┘
 このワークショップでは架空データのみを扱う。実在する機密情報や未公開の研究データを使用しない。
 ```
 
-### 確認ポイント
+ここまでの変更をコミットします。コミットメッセージは `共通Copilot指示を追加` とします。
+
+### チェックポイント
 
 - [ ] `.github`フォルダに`copilot-instructions.md`がある
 - [ ] 事実と解釈の区別、根拠の記録、架空データの使用が含まれている
@@ -203,7 +205,9 @@ description: 研究資料を確認し、根拠付きの研究概要と公開情�
 - 未確認事項
 ```
 
-### 確認ポイント
+ここまでの変更をコミットします。コミットメッセージは `researcherエージェントを追加` とします。
+
+### チェックポイント
 
 - [ ] ファイル名が`researcher.agent.md`である
 - [ ] ファイル先頭に`name`と`description`を含むYAML frontmatterがある
@@ -336,7 +340,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - reports/assay-analysis.md
 - reports/assay-statistics.md（存在する場合）
 - reports/executive-summary.md
-- 現在の変更差分
+- 作成済みの成果物ファイル
 
 # Output
 
@@ -361,7 +365,9 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - 修正推奨事項
 ```
 
-### 確認ポイント
+ここまでの変更をコミットします。コミットメッセージは `分析・報告・レビューエージェントを追加` とします。
+
+### チェックポイント
 
 - [ ] 3ファイルとも`.agent.md`で終わっている
 - [ ] それぞれ異なる役割、入力、出力が定義されている
@@ -389,7 +395,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
     この確認ではファイルを変更しないでください。
     ```
 
-### 確認ポイント
+### チェックポイント
 
 - [ ] 4つのエージェントが選択肢に表示された
 - [ ] 選択したエージェントの役割に沿った応答が得られた
@@ -415,8 +421,9 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
     ```
 3. Copilotが提示する変更内容を確認してから適用します。
 4. `references/research-summary.md`を開き、元資料と公開情報の出典を照合します。
+5. ここまでの変更をコミットします。コミットメッセージは `研究資料の調査結果を保存` とします。
 
-### 確認ポイント
+### チェックポイント
 
 - [ ] 研究目的、実験条件、既存結果に根拠ファイル名がある
 - [ ] 公開情報に出典、公開日、対象、条件がある
@@ -485,10 +492,11 @@ reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合して�
 元CSVを基準に確認し、ファイルを変更せず、数値の事実と解釈・提案を区別して報告してください。
 ```
 
-**注意**  
-Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。本演習には不要なフォルダであるため、コミットせず削除して構いません。
+ここまでの変更をコミットします。コミットメッセージは `実験結果の分析を保存` とします。
+なお、Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。  
+本演習には不要なフォルダであるため、コミットせず削除して構いません。
 
-### 確認ポイント
+### チェックポイント
 
 - [ ] 事実、解釈、追加試験案が区別されている
 - [ ] 比較できない条件差が明示されている
@@ -516,8 +524,9 @@ Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロ�
     ```
 3. 提示された変更を確認して適用します。
 4. 報告書の記述を調査・分析ファイルまでさかのぼり、根拠を確認します。
+5. ここまでの変更をコミットします。コミットメッセージは `研究責任者向け報告書を作成` とします。
 
-### 確認ポイント
+### チェックポイント
 
 - [ ] 冒頭の要約が入力成果物の範囲を超えていない
 - [ ] 事実、解釈、提案、未確認事項が区別されている
@@ -535,25 +544,20 @@ Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロ�
 
 ### 作業
 
-1. ターミナルで差分を確認します。
-    ```bash
-    git status --short
-    git diff
-    ```
-    まだ変更をコミットしていない場合、`git diff`で追跡対象ファイルの変更を確認できます。新規ファイルは`git status`に表示されることを確認し、VS Codeで内容を開いてレビュー対象に含めます。
-2. `reviewer`エージェントを選びます。
-3. 次の依頼を入力します。
+1. `reviewer`エージェントを選びます。
+2. 次の依頼を入力します。
     ```text
-    README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdと現在の変更差分を照合してください。
+    README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdを照合してください。
     reports/assay-statistics.mdがある場合は、元CSVおよびreports/assay-analysis.mdの数値と照合してください。統計レポートは派生資料として扱い、元CSVを基準にしてください。
     数値の誤り、出典漏れ、元資料との不整合、過度な推測、事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認してください。
     問題が確認できた箇所のみ、対象ファイル、問題、理由、必要に応じた修正案を記載してください。研究上の判断や結論は追加しないでください。
     reports/review-comments.mdに保存してください。
     ```
-4. `reports/review-comments.md`を読み、各指摘を元資料で検証します。
-5. 指摘を自動的にすべて採用せず、修正するかどうかを受講者が判断します。必要な場合は該当ファイルを修正し、再度差分を確認します。
+3. `reports/review-comments.md`を読み、各指摘を元資料で検証します。
+4. 指摘を自動的にすべて採用せず、修正するかどうかを受講者が判断します。必要な場合は該当ファイルを修正し、内容を再確認します。
+5. ここまでの変更をコミットします。コミットメッセージは `レビュー結果を保存` とします。
 
-### 確認ポイント
+### チェックポイント
 
 - [ ] レビュー指摘に対象ファイルと理由がある
 - [ ] 元資料で指摘の正しさを確認した
@@ -564,47 +568,27 @@ Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロ�
 
 ---
 
-## Step 9：変更を確認してローカルGitに記録する
+## Step 9：ローカルGitの履歴を確認する
 
 ### 目的
 
-作成した設定・成果物とレビュー後の変更を確認し、ローカルの履歴に記録します。
+各Stepでコミットした変更と、作業ツリーの状態を確認します。
 
 ### 作業
 
-1. 変更ファイルを確認します。
-    ```bash
-    git status
-    git diff
-    ```
-2. VS Codeで新規ファイルを含む変更内容を確認します。研究判断の断定、出典の欠落、誤った数値がないことを確かめます。
-3. 確認したファイルだけをステージし、コミットします。以下は例です。実際に追加・変更したファイルに合わせて指定してください。
-    ```bash
-    git add .github/copilot-instructions.md .github/agents/researcher.agent.md .github/agents/analyst.agent.md .github/agents/reporter.agent.md .github/agents/reviewer.agent.md references/research-summary.md reports/assay-analysis.md reports/executive-summary.md reports/review-comments.md
-    ```
-   Python追加演習を行った場合は、作成したファイルも確認してから、コミット前に追加でステージします。
-    ```bash
-    git add scripts/summarize_assay.py reports/assay-statistics.md
-    ```
-    ステージ対象を確認してからコミットします。
-    ```bash
-    git diff --cached
-    git commit -m "研究支援用Copilotエージェントを追加"
-    ```
-4. コミット後の状態を確認します。
-    ```bash
-    git status --short --branch
-    git show --stat --oneline HEAD
-    ```
+次のコマンドで作業ツリーとコミット履歴を確認します。
 
-このワークショップでは、コミットと差分の確認までを行います。リモートへのpushやPull Request作成は行いません。
+```bash
+git status --short --branch
+git log --oneline
+```
 
-### 確認ポイント
+各Stepのコミットメッセージが履歴に表示され、未コミットの変更が残っていないことを確認します。
 
-- [ ] ステージするファイルを個別に確認した
-- [ ] スクリプトと集計結果も差分を確認し、コミットに含めた
-- [ ] コミット差分に意図しないファイルが含まれていない
-- [ ] コミット後の状態を確認した
+### チェックポイント
+
+- [ ] コミット履歴に各Stepのメッセージが表示される
+- [ ] 作業ツリーに未コミットの変更が残っていない
 
 ---
 
@@ -630,12 +614,6 @@ research-project/
 │   └── review-comments.md
 └── scripts/
     └── summarize_assay.py
-```
-
-Step 6のPython追加演習を行った場合は、次のファイルも作成されます。
-
-```text
-research-project/
 ```
 
 ### 成果物チェック
