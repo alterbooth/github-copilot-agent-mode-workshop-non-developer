@@ -40,12 +40,13 @@
 - Git
 - Webブラウザー
 - インターネット接続
+- Python 3
 
 ### 当日配布するもの
 
 当日は、次の内容を含むZIPファイルを配布します。
 
-- 演習用ローカルGitリポジトリ一式（リモート未設定）
+- 演習用ローカルGitリポジトリ一式
 - 本トレーニング手順
 - 架空の研究資料
 - 架空の実験結果
@@ -58,9 +59,10 @@
 - [ ] Copilot ChatでAgent Modeを選択できる
 - [ ] ターミナルを開ける
 - [ ] `git --version` を実行するとバージョン情報が表示される
+- [ ] Windowsでは `python --version`、macOS/Linuxでは `python3 --version` でバージョン情報が表示される
 
-> [!IMPORTANT]
-> 本ワークショップでは、架空の化合物、研究資料、実験結果のみを使用します。実在する機密情報や未公開の研究データは入力しないでください。
+**注意**  
+本ワークショップでは、架空の化合物、研究資料、実験結果のみを使用します。実在する機密情報や未公開の研究データは入力しないでください。
 
 ---
 
@@ -112,7 +114,7 @@ research-project/
 
 ### 目的
 
-通常のチャットとは異なり、Agent Modeは質問への回答に加えて、リポジトリ内の複数ファイルを調べ、内容を関連付けたり、必要に応じてファイルを作成・変更したりします。ただし、生成結果が正しいとは限らないため、最後は人が確認します。
+Agent Modeは通常のチャットと異なり、質問に回答するだけでなく、リポジトリ内の複数ファイルを調べて内容を関連付けます。必要に応じて、ファイルの作成や変更も行います。ただし、生成結果が正しいとは限らないため、最後は人が確認します。
 
 ### 作業手順
 
@@ -162,19 +164,11 @@ git remote -v
 
 `git remote -v` に何も表示されないことを確認します。この演習ではローカルリポジトリだけを使用し、リモートの追加やプッシュは行いません。
 
-### 研究ノートを追加する
-
-講師の指示に従い、指定された研究ノートを追加または編集します。保存後、再度状態を確認します。
-
-```bash
-git status
-```
-
 ### 変更を記録する
 
 ```bash
 git add .
-git commit -m "実験ノートを追加"
+git commit -m "演習資料を登録"
 ```
 
 ### チェックポイント
@@ -233,8 +227,8 @@ git commit -m "実験ノートを追加"
 
 Web上の公開情報を調査し、出典とともに整理します。
 
-> [!IMPORTANT]
-> ABC-101は架空の候補化合物です。ABC-101そのものについて、信頼できる公開情報が見つからない場合があります。見つからない情報を推測で補わず、「確認できない」と記載させてください。
+**注意**  
+ABC-101は架空の候補化合物です。ABC-101そのものについて、信頼できる公開情報が見つからない場合があります。見つからない情報を推測で補わず、「確認できない」と記載させてください。
 
 ### Webで関連情報を調べる
 
@@ -325,7 +319,6 @@ Copilotからファイル変更の確認を求められた場合は、変更内�
 ```text
 次の情報を比較してください。
 - リポジトリ内の実験計画書
-- リポジトリ内の研究ノート
 - references/research-summary.mdに保存した公開情報の調査結果
 
 次の観点で整理してください。
@@ -391,6 +384,63 @@ CSV形式の測定結果を読み取り、特徴や確認事項を整理しま�
     ```
 4. `reports/assay-analysis.md` を開き、分析結果に記載された数値が元のCSVと一致しているか確認します。
 
+#### Pythonで数値集計を再現する
+
+Pythonのpandasを使い、CSVの基本確認と記述統計を再現します。Copilotによる分析の代わりではなく、数値を照合するための追加演習です。
+
+1. リポジトリのルートで仮想環境 `.venv` を作成し、有効化します。
+    ```text
+    Windows PowerShell:
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+
+    macOS/Linux:
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+2. 有効化した仮想環境にpandasをインストールします。
+    ```text
+    python -m pip install pandas
+    ```
+   この後のコマンドも、仮想環境を有効化した同じターミナルで実行します。
+3. `results/assay-results.csv` の列名を確認します。
+4. Copilot Chatに次の指示を入力します。
+    ```text
+    results/assay-results.csvを読み取り、CSVの検証と記述統計を行うPythonスクリプトを作成してください。
+
+    保存先:
+    scripts/summarize_assay.py
+
+    条件:
+    - pandasとPython標準ライブラリのpathlibを使う。pandas以外の追加パッケージやWebアクセスは使わない
+    - 入力CSVは読み取り専用とし、リポジトリのルートから実行できるようにする
+    - experiment_id、compound_id、concentration_uM、replicate、qc_flag、および下記の測定列を必須列として確認する
+    - concentration_uMと下記の測定列は数値として扱う。空欄を除き、数値に変換できない値がある場合は、問題の列やCSV上の行番号が分かるエラーを表示して処理を失敗させる
+    - compound_idとconcentration_uMごとに、cell_viability_pct、il6_inhibition_pct、tnf_alpha_inhibition_pct、cytotoxicity_pctの平均値と有効値の件数を集計する
+    - 空欄は欠損として扱い、平均から除外したうえで、項目ごとの欠損件数を報告する
+    - CSVの総データ行数を報告する
+    - qc_flagがPASS以外の行数と、該当するexperiment_id、compound_id、concentration_uM、replicate、qc_flagを報告する
+    - 集計結果、対象ファイル、集計方法をreports/assay-statistics.mdへ出力する。reportsフォルダーがない場合は作成する
+    - 数値の集計事実だけを出力し、有望性、異常値、研究上の結論を判定・推測しない
+    - 既存のCSVや他のファイルを変更しない
+    ```
+5. 生成された `scripts/summarize_assay.py` を開き、入力がCSVファイルに限られ、出力も `reports/assay-statistics.md` に限定されていることを確認します。外部通信やpandas以外の追加パッケージを使っていないことも確認します。
+6. リポジトリのルートで実行します。
+    ```text
+    python scripts/summarize_assay.py
+    ```
+    コマンド実行時にエラーが表示された場合は、内容を確認し、原因を特定してから修正します。
+7. `reports/assay-statistics.md` を開き、対象行数、欠損件数、QCフラグ、代表的な平均値を元CSVと照合します。平均値は計算結果であり、それだけで有効性や安全性を判断しないでください。
+8. Copilotに次の照合を依頼します。
+    ```text
+    reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合してください。
+    不一致があれば、該当する化合物・濃度・測定項目と根拠ファイルを示してください。
+    ファイルは変更せず、数値の事実と解釈・提案を区別して報告してください。
+    ```
+
+**注意**  
+Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。本演習には不要なフォルダであるため、コミットせず削除して構いません。
+
 ### チェックポイント
 
 - [ ] `results/assay-results.csv` が分析対象になっている
@@ -399,6 +449,7 @@ CSV形式の測定結果を読み取り、特徴や確認事項を整理しま�
 - [ ] 欠損値や異常値の可能性が明記されている
 - [ ] 事実、解釈、提案が分けられている
 - [ ] `reports/assay-analysis.md` が作成された
+- [ ] `reports/assay-statistics.md` の集計値を元CSVと照合した
 
 ---
 
@@ -554,9 +605,12 @@ git show --format= HEAD -- reports/executive-summary.md
 research-project/
 ├── references/
 │   └── research-summary.md
-└── reports/
-    ├── assay-analysis.md
-    └── executive-summary.md
+├── reports/
+│   ├── assay-analysis.md
+│   ├── assay-statistics.md
+│   └── executive-summary.md
+└── scripts/
+    └── summarize_assay.py
 ```
 
 ### 成果物チェック
@@ -564,16 +618,7 @@ research-project/
 - [ ] `references/research-summary.md` に調査結果と参照元が記録されている
 - [ ] `reports/assay-analysis.md` に実験結果の分析が記録されている
 - [ ] `reports/executive-summary.md` に研究責任者向けの報告が記録されている
-- [ ] Gitに変更履歴が記録されている
-- [ ] ローカルコミットの差分を確認できる
-
-### 学習内容チェック
-
-- [ ] Agent Modeが複数ファイルを確認できることを理解した
-- [ ] Web調査では出典確認が必要だと理解した
-- [ ] AIが生成した内容を人が確認する必要性を理解した
-- [ ] 事実、解釈、提案を分ける重要性を理解した
-- [ ] 会話だけで終わらせず、成果物をリポジトリへ保存できた
+- [ ] `scripts/summarize_assay.py` と `reports/assay-statistics.md` が作成され、集計内容を確認した
 
 ---
 

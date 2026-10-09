@@ -2,7 +2,7 @@
 
 ## ワークショップの概要
 
-このワークショップは、[**GitHub Copilot Agent Modeで実現する研究業務活用ワークショップ**](textbook-copilot-chat.md)で作成した研究プロジェクトを引き継ぐ続編です。リポジトリに共通指示と役割別のカスタムエージェントを追加し、成果物ファイルを使って調査、分析、報告、レビューを順に進めます。
+このワークショップは、[**GitHub Copilot Agent Modeで実現する研究業務活用ワークショップ**](textbook-copilot-chat.md)で作成した研究プロジェクトを引き継ぐ続編です。リポジトリに共通指示と役割別のカスタムエージェントを追加します。成果物ファイルを使って、調査、分析、報告、レビューを順に進めます。
 
 ### 到達目標
 
@@ -32,8 +32,8 @@ research-project/
 
 `.github/copilot-instructions.md`はリポジトリで作業するCopilotへの共通方針です。`.github/agents/`内の`.agent.md`ファイルは、それぞれの役割に特化したカスタムエージェントを定義します。
 
-> [!IMPORTANT]
-> 演習では架空の化合物ABC-101と配布済みの架空データのみを扱います。Copilotが作成した調査・分析・提案は研究判断ではありません。内容の確認と判断は受講者が行います。
+**注意**  
+演習では架空の化合物ABC-101と配布済みの架空データのみを扱います。Copilotが作成した調査・分析・提案は研究判断ではありません。内容の確認と判断は受講者が行います。
 
 ---
 
@@ -43,6 +43,7 @@ research-project/
 - GitHub Copilot Chatを利用できる
 - VS CodeでAgent Modeとカスタムエージェントを利用できる
 - 前編の手順が未完了の場合は、少なくとも研究資料、`results/assay-results.csv`、`protocols/`、`experiments/`がリポジトリにある
+- Python 3とpandasを設定済みの `.venv`
 
 前編から続けるため、新しいリポジトリを作成する必要はありません。作業を始める前に、VS Codeのエクスプローラーで研究プロジェクトのルートを開いていることを確認します。
 
@@ -53,6 +54,18 @@ git status
 ```
 
 前編で作成した未コミットの変更がある場合は、その内容を確認してから作業してください。自分が意図していない変更を削除したり、上書きしたりしないでください。この演習ではリモートへのpushやPull Request作成は行いません。
+
+Pythonの追加演習を行う場合は、設定済みの `.venv` にあるPython 3とpandasを確認します。演習を省略しても、ほかの作業は続行できます。
+
+```text
+Windows PowerShell:
+.\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -c "import pandas; print(pandas.__version__)"
+
+macOS/Linux:
+.venv/bin/python --version
+.venv/bin/python -c "import pandas; print(pandas.__version__)"
+```
 
 ---
 
@@ -67,7 +80,7 @@ git status
 | エージェント | 主な作業 | 出力 |
 | --- | --- | --- |
 | `researcher` | 研究資料の理解、必要に応じた公開情報調査 | `references/research-summary.md` |
-| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md` |
+| `analyst` | CSV分析、公開情報との比較、追加試験案の作成 | `reports/assay-analysis.md`（Python演習時はスクリプトと集計結果も作成） |
 | `reporter` | 調査・分析結果を統合した報告書の作成 | `reports/executive-summary.md` |
 | `reviewer` | 元資料・成果物・変更差分との照合 | `reports/review-comments.md` |
 
@@ -224,12 +237,15 @@ description: CSVの数値を整理し、調査結果との比較と根拠付き�
 
 - references/research-summary.md
 - results/*.csv
+- reports/assay-statistics.md（存在する場合。派生資料として扱う）
 - protocols/*
 - experiments/*
 
 # Output
 
 - reports/assay-analysis.md
+- scripts/summarize_assay.py
+- reports/assay-statistics.md
 
 # Instructions
 
@@ -239,6 +255,7 @@ description: CSVの数値を整理し、調査結果との比較と根拠付き�
 4. 内部研究と公開研究は、比較可能な評価軸と条件を明示して比較する。条件が異なる場合は直接比較できないことを記載する。
 5. 不足する評価項目と追加試験案には、それぞれ根拠と想定リスクを示す。研究上の結論は断定しない。
 6. 結果を指定された出力ファイルに保存する。
+7. Pythonによる数値検証を依頼された場合は、pandasとPython標準ライブラリのpathlibを使い、入力CSVを変更しない補助スクリプトと集計結果を指定先に保存する。数値の事実と解釈を区別し、スクリプトを利用者の確認前に実行しない。
 
 # Output Structure
 
@@ -317,6 +334,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - results/*.csv
 - references/research-summary.md
 - reports/assay-analysis.md
+- reports/assay-statistics.md（存在する場合）
 - reports/executive-summary.md
 - 現在の変更差分
 
@@ -364,7 +382,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 1. Copilot Chatを開き、Agent Modeにします。
 2. エージェント選択メニューを開き、`researcher`、`analyst`、`reporter`、`reviewer`が一覧にあるか確認します。  
     ![vscode-copilot-custom-agents](img/agents/vscode-copilot-custom-agents.png)
-3. 一覧に表示されない場合は、ファイル名、配置場所、frontmatterの区切り（`---`）、`name`と`description`を確認します。保存後も反映されない場合は、VS Codeの表示を更新するか、ウィンドウを再読み込みしてから、もう一度確認します。
+3. 一覧に表示されない場合は、ファイル名、配置場所、frontmatterの区切り（`---`）、`name`と`description`を確認します。保存後も反映されない場合は、VS Codeの表示を更新するか、ウィンドウを再読み込みして、もう一度確認します。
 4. `researcher`エージェントを選び、資料を確認するだけの短い依頼を実行します。
     ```text
     研究資料を確認し、研究目的と候補化合物を根拠ファイル名付きで簡潔にまとめてください。
@@ -422,11 +440,53 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
     references/research-summary.mdとresults/assay-results.csv、関連するprotocols/およびexperiments/を確認してください。
     CSVの数値・単位・実験条件を元ファイルと照合し、確認済みの事実と数値からの解釈を分けてください。
     内部研究と公開情報を比較するときは、比較軸と条件を明記し、条件が異なる場合は直接比較できないことを示してください。
+    reports/assay-statistics.mdがある場合は補助資料として参照し、元CSVと照合してください。統計レポートを元データとして扱わないでください。
     不足する評価項目と追加試験案には、それぞれ根拠と想定リスクを記載してください。
     研究上の結論は断定せず、reports/assay-analysis.mdに保存してください。
     ```
 3. 提案された変更を確認して適用します。
 4. 分析ファイルに記載された数値を`results/assay-results.csv`と照合します。
+
+#### pandasで数値集計を照合する
+
+前編のPython追加演習で `scripts/summarize_assay.py` が作成済みの場合は、コードを確認してから再利用します。ない場合は、`analyst`エージェントに次の指示を入力して作成します。実行時は設定済みの `.venv` を使います。
+
+```text
+results/assay-results.csvの数値を検証・集計するPythonスクリプトを作成してください。
+
+保存先:
+scripts/summarize_assay.py
+
+条件:
+- pandasとPython標準ライブラリのpathlibを使う。pandas以外の追加パッケージやWebアクセスは使わない
+- 入力CSVは読み取り専用とし、リポジトリのルートから実行できるようにする
+- experiment_id、compound_id、concentration_uM、replicate、qc_flag、および下記の測定列を必須列として確認する
+- concentration_uMと下記の測定列は数値として扱う。空欄を除き、数値に変換できない値がある場合は、問題の列やCSV上の行番号が分かるエラーを表示して処理を失敗させる
+- compound_idとconcentration_uMごとに、cell_viability_pct、il6_inhibition_pct、tnf_alpha_inhibition_pct、cytotoxicity_pctの平均値と有効値の件数を集計する
+- 空欄の件数を項目ごとに報告し、平均値の計算からは除外する
+- CSVの総データ行数と、qc_flagがPASS以外の行およびexperiment_id、compound_id、concentration_uM、replicate、qc_flagを報告する
+- 集計結果、対象ファイル、集計方法をreports/assay-statistics.mdに保存する。reportsフォルダーがない場合は作成する
+- 出力は数値の集計事実に限り、有望性や研究上の結論を判定しない
+- 既存のCSVや指定出力先以外のファイルを変更しない
+```
+
+スクリプトを実行する前に、入力がCSV、出力先が `reports/assay-statistics.md` に限定されていることを確認します。外部通信やpandas以外の追加パッケージを使っていないことも確認します。リポジトリのルートから、設定済みの `.venv` のPythonで実行します。
+
+```text
+Windows PowerShell: .\.venv\Scripts\python.exe scripts/summarize_assay.py
+macOS/Linux:        .venv/bin/python scripts/summarize_assay.py
+```
+
+`reports/assay-statistics.md`の行数、欠損件数、QCフラグ、平均値を元CSVと照合します。数値の差があれば解釈で埋めず、原因を確認します。平均値だけで有効性や安全性を判断しないでください。
+
+```text
+reports/assay-analysis.mdとreports/assay-statistics.mdの数値を照合してください。
+不一致があれば、該当する化合物・濃度・測定項目と根拠を示してください。
+元CSVを基準に確認し、ファイルを変更せず、数値の事実と解釈・提案を区別して報告してください。
+```
+
+**注意**  
+Copilotでコードを生成する際に `%SystemDrive%` フォルダがプロジェクト内に作成されることがあります。本演習には不要なフォルダであるため、コミットせず削除して構いません。
 
 ### 確認ポイント
 
@@ -434,6 +494,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - [ ] 比較できない条件差が明示されている
 - [ ] 不足項目と試験案に根拠とリスクがある
 - [ ] `reports/assay-analysis.md`が保存されている
+- [ ] スクリプトと集計結果を元CSVと照合した
 
 ---
 
@@ -484,6 +545,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 3. 次の依頼を入力します。
     ```text
     README.md、protocols/、experiments/、results/、references/research-summary.md、reports/assay-analysis.md、reports/executive-summary.mdと現在の変更差分を照合してください。
+    reports/assay-statistics.mdがある場合は、元CSVおよびreports/assay-analysis.mdの数値と照合してください。統計レポートは派生資料として扱い、元CSVを基準にしてください。
     数値の誤り、出典漏れ、元資料との不整合、過度な推測、事実と解釈の混在、報告書内の矛盾、根拠不足の主張を確認してください。
     問題が確認できた箇所のみ、対象ファイル、問題、理由、必要に応じた修正案を記載してください。研究上の判断や結論は追加しないでください。
     reports/review-comments.mdに保存してください。
@@ -496,6 +558,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 - [ ] レビュー指摘に対象ファイルと理由がある
 - [ ] 元資料で指摘の正しさを確認した
 - [ ] 根拠のない指摘や研究判断が追加されていない
+- [ ] （Python集計がある場合）元CSVを基準に集計値と報告内容を照合した
 - [ ] 修正要否を受講者自身が判断した
 - [ ] `reports/review-comments.md`が保存されている
 
@@ -518,6 +581,13 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 3. 確認したファイルだけをステージし、コミットします。以下は例です。実際に追加・変更したファイルに合わせて指定してください。
     ```bash
     git add .github/copilot-instructions.md .github/agents/researcher.agent.md .github/agents/analyst.agent.md .github/agents/reporter.agent.md .github/agents/reviewer.agent.md references/research-summary.md reports/assay-analysis.md reports/executive-summary.md reports/review-comments.md
+    ```
+   Python追加演習を行った場合は、作成したファイルも確認してから、コミット前に追加でステージします。
+    ```bash
+    git add scripts/summarize_assay.py reports/assay-statistics.md
+    ```
+    ステージ対象を確認してからコミットします。
+    ```bash
     git diff --cached
     git commit -m "研究支援用Copilotエージェントを追加"
     ```
@@ -532,6 +602,7 @@ description: 元資料と成果物を照合し、根拠不足や不整合など�
 ### 確認ポイント
 
 - [ ] ステージするファイルを個別に確認した
+- [ ] スクリプトと集計結果も差分を確認し、コミットに含めた
 - [ ] コミット差分に意図しないファイルが含まれていない
 - [ ] コミット後の状態を確認した
 
@@ -552,10 +623,19 @@ research-project/
 │       └── reviewer.agent.md
 ├── references/
 │   └── research-summary.md
-└── reports/
-    ├── assay-analysis.md
-    ├── executive-summary.md
-    └── review-comments.md
+├── reports/
+│   ├── assay-analysis.md
+│   ├── assay-statistics.md
+│   ├── executive-summary.md
+│   └── review-comments.md
+└── scripts/
+    └── summarize_assay.py
+```
+
+Step 6のPython追加演習を行った場合は、次のファイルも作成されます。
+
+```text
+research-project/
 ```
 
 ### 成果物チェック
@@ -564,20 +644,9 @@ research-project/
 - [ ] 4つのカスタムエージェントがVS Codeで選択できる
 - [ ] `references/research-summary.md`に調査結果と参照元が記録されている
 - [ ] `reports/assay-analysis.md`に実験結果の分析が記録されている
+- [ ] `scripts/summarize_assay.py`と`reports/assay-statistics.md`が作成され、集計内容を確認した
 - [ ] `reports/executive-summary.md`に研究責任者向けの報告が記録されている
 - [ ] `reports/review-comments.md`にレビュー結果が記録されている
-- [ ] 出典、数値、事実と解釈の区別を元資料で確認した
-- [ ] レビュー結果に対する修正要否を人が判断した
-- [ ] 変更を確認し、Gitに変更履歴が記録されている
-- [ ] ローカルコミットの差分を確認できる
-
-### 学習内容チェック
-
-- [ ] リポジトリ共通のカスタム指示がCopilotの作業方針を共有することを理解した
-- [ ] カスタムエージェントに役割、入力、出力を定義できることを理解した
-- [ ] 成果物ファイルを介してエージェント間で情報を受け渡せることを理解した
-- [ ] 生成内容の根拠を元資料で確認する必要性を理解した
-- [ ] 事実、解釈、提案を分け、人が修正要否を判断する重要性を理解した
 
 ---
 
