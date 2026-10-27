@@ -60,26 +60,16 @@
 
 ## 演習用ファイルの準備
 
-1. 講師から配布されたZIPファイルをPCへ保存します。
-2. ZIPファイルを `research-project` フォルダーとして展開します。
-3. 展開したフォルダーをVisual Studio Codeで開きます。
+1. リポジトリをZipファイルとしてダウンロードします。  
+    ![repository-download](img/chat/repository-download.png)
+2. 展開したZIPファイルに含まれる `github-copilot-agent-mode-workshop-non-developer-main` フォルダーを `research-project` にリネームします。
+3. `research-project` フォルダーをVisual Studio Codeで開きます。
     1. **［ファイル］→［フォルダーを開く］** を選択します。
     2. 展開した `research-project` フォルダーを選択します。
     3. 制限モードが有効になっている場合は、フォルダーを信頼する設定を行います。  
         ![vscode-trust-directory](img/chat/vscode-trust-directory.png)
-    4. 左側のエクスプローラーに研究資料が表示されることを確認します。
-
-## Visual Studio Codeでコミットする
-
-コミット操作は、ターミナルではなくVisual Studio Codeのソース管理ビューで行います。
-
-1. アクティビティバーの［ソース管理］アイコンを選びます。
-2. ［変更］に表示されたファイルを確認し、コミット対象ファイルの「＋」を選んでステージします。Step1の初回コミットでは、配布された演習ファイルを確認してから［すべての変更をステージ］を選びます。  
-    ![vscode-git-stage](img/chat/vscode-git-stage.png)
-3. ［ステージされた変更］にコミット対象だけが表示されていることを確認します。
-4. 各Stepで指定されるコミットメッセージを入力し、［コミット］を選びます。  
-    ![vscode-git-commit](img/chat/vscode-git-commit.png)
-5. コミット後、［変更］に意図しないファイルが残っていないことを確認します。未コミットの変更が残っている場合は内容を確認してください。
+    4. 左側のエクスプローラーに研究資料が表示されることを確認します。  
+        ![vscode-research-project](img/chat/vscode-research-project.png)
 
 ---
 
@@ -134,6 +124,18 @@ git remote -v
 
 `git remote -v` に何も表示されないことを確認します。この演習ではローカルリポジトリだけを使用し、リモートの追加やプッシュは行いません。  
 また、ここまでの変更をコミットします。コミットメッセージは `演習資料を登録` とします。
+
+### Visual Studio Codeでコミットする
+
+コミット操作は、ターミナルではなくVisual Studio Codeのソース管理ビューで行います。
+
+1. アクティビティバーの［ソース管理］アイコンを選びます。
+2. ［変更］に表示されたファイルを確認し、コミット対象ファイルの「＋」を選んでステージします。Step1の初回コミットでは、配布された演習ファイルを確認してから［すべての変更をステージ］を選びます。  
+    ![vscode-git-stage](img/chat/vscode-git-stage.png)
+3. ［ステージされた変更］にコミット対象だけが表示されていることを確認します。
+4. 各Stepで指定されるコミットメッセージを入力し、［コミット］を選びます。  
+    ![vscode-git-commit](img/chat/vscode-git-commit.png)
+5. コミット後、［変更］に意図しないファイルが残っていないことを確認します。未コミットの変更が残っている場合は内容を確認してください。
 
 ### チェックポイント
 
